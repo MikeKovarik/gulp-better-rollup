@@ -55,7 +55,7 @@ This plugin is based on [the standard Rollup options](https://github.com/rollup/
 #### `rollupOptions`
 First argument is object of options found you would specify as [`rollup.rollup(options)` in Rollup API](https://github.com/rollup/rollup/wiki/JavaScript-API#rolluprollup-options-)
 
-`entry` should not be used if source is single file as the entry file is provided by gulp. 
+`entry` should not be used as the entry file is provided by gulp. It also works with gulp-watch
 
 ``` js
   gulp.src('src/app.js')
@@ -64,11 +64,11 @@ First argument is object of options found you would specify as [`rollup.rollup(o
     .pipe(gulp.dest('./dist'))
 ```
 
-But it could be used with for example gulp-watch.
+But if you really need it for some bizzare reason then you can specify custom entry like so
 
 ``` js
-  gulp.src('src/*.js')
-    .pipe(watch('src/*.js'))
+  gulp.src('src/app.js')
+    .pipe(someRealityBendingPlugin(...))
     .pipe(rollup({
       entry: 'src/app.js'
     }, 'umd'))

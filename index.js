@@ -148,6 +148,8 @@ class GulpRollup extends Transform {
 				// pass file to gulp and end stream
 				cb(null, file)
 			}).catch(err => {
+				if (rollupOptions.cache !== false)
+					rollupCache.delete(rollupOptions.entry)
 				process.nextTick(() => {
 					this.emit('error', new PluginError(PLUGIN_NAME, err))
 					cb(null, file)
