@@ -36,7 +36,7 @@ class GulpRollup extends Transform {
 
 		var rollupOptions
 		if (this.arg2) {
-			rollupOptions = this.arg1
+			rollupOptions = Object.assign({}, this.arg1)
 			var bundleList = parseBundles(this.arg2)
 		} else {
 			rollupOptions = {}
