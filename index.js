@@ -61,7 +61,7 @@ class GulpRollup extends Transform {
 
 		var originalCwd = file.cwd
 		var originalPath = file.path
-		var moduleName = path.basename(file.path, path.extname(file.path))
+		var moduleName = _.camelCase(path.basename(file.path, path.extname(file.path)))
 
 		function generateAndApplyBundle(bundle, generateOptions, targetFile) {
 			// Sugaring the API by copying convinience objects and properties from rollupOptions
