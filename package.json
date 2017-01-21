@@ -24,6 +24,7 @@
   ],
   "dependencies": {
     "gulp-util": "^3.0.7",
+    "lodash": "^4.17.4",
     "rollup": "^0.36.0",
     "vinyl-sourcemaps-apply": "^0.2.1"
   },

@@ -7,7 +7,7 @@ var PluginError = gutil.PluginError
 var rollup = require('rollup')
 var path = require('path')
 var applySourceMap = require('vinyl-sourcemaps-apply')
-
+var _ = require('lodash');
 
 var PLUGIN_NAME = 'gulp-better-rollup'
 
