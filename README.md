@@ -95,9 +95,7 @@ Second argument is object of options describing output format of the bundle. It'
 
 #### shortcuts
 
-If you don't need to define `plugins` like babel, use `external` modules, explicitly specify `entry` file, or any other options of `rollupOptions` object, you can just skip this first argument alltogether. Also `generateOptions` can be replaced be string of module format if you only export in a single format.
-
-**Both `rollupOptions` and `generateOptions` can be also specified as a single object** if you preffer simplicity over semantically relying on the Rollup JS API. This could also come in handy as setting defaults for `generateOptions` when you export multiple formats and you don't want to copy-paste the same `exports` and `blobal` options.
+If you don't need to define `plugins` like babel, use `external` modules, explicitly specify `entry` file, or any other options of `rollupOptions` object, you can just skip this first argument alltogether. Also `generateOptions` can be replaced by string of module format if you only export in a single format.
 
 ``` js
 gulp.task('dev', function() {
@@ -107,11 +105,44 @@ gulp.task('dev', function() {
 })
 ```
 
+**Both `rollupOptions` and `generateOptions` can be also specified as a single object** if you preffer simplicity over semantically relying on the Rollup JS API. This could also come in handy as setting defaults for `generateOptions` when you export multiple formats and you don't want to copy-paste the same `exports` and `blobal` options.
+
+``` js
+gulp.task('dev', function() {
+  gulp.src('lib/mylib.js')
+    .pipe(rollup({
+      treeshake: false,
+      plugins: [require('rollup-plugin-babel')],
+      external: ['first-dep', 'OtherDependency'],
+    }, {
+      moduleName: 'CustomModuleName',
+      format: 'umd',
+    }))
+    .pipe(gulp.dest('dist'))
+})
+```
+
+Can be simplified into
+
+``` js
+gulp.task('dev', function() {
+  gulp.src('lib/mylib.js')
+    .pipe(rollup({
+      treeshake: false,
+      plugins: [require('rollup-plugin-babel')],
+      external: ['first-dep', 'OtherDependency'],
+      moduleName: 'CustomModuleName',
+      format: 'umd',
+    }))
+    .pipe(gulp.dest('dist'))
+})
+```
+
 #### exporting multiple bundles
 
 Array of `generateOptions` can be provided to export into multiple formats.
 
-```
+```js
 var pkg = require('./package.json')
 gulp.task('build', function() {
   gulp.src('lib/mylib.js')
