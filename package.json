@@ -1,6 +1,6 @@
 {
   "name": "gulp-better-rollup",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Better Gulp plugin for Rollup ES6 module bundler",
   "author": "Mike Kovarik",
   "license": "MIT",
@@ -23,9 +23,9 @@
     "es6"
   ],
   "dependencies": {
-    "gulp-util": "^3.0.7",
-    "lodash": "^4.17.4",
-    "rollup": "^0.41.4",
+    "gulp-util": "^3.0.8",
+    "lodash.camelcase": "^4.3.0",
+    "rollup": "^0.41.5",
     "vinyl-sourcemaps-apply": "^0.2.1"
   },
   "devDependencies": {

@@ -7,7 +7,7 @@ var PluginError = gutil.PluginError
 var rollup = require('rollup')
 var path = require('path')
 var applySourceMap = require('vinyl-sourcemaps-apply')
-var _ = require('lodash');
+var camelCase = require('lodash.camelcase')
 
 var PLUGIN_NAME = 'gulp-better-rollup'
 
@@ -28,7 +28,7 @@ class GulpRollup extends Transform {
 	_transform(file, encoding, cb) {
 		// cannot handle empty or unavailable files
 		if (file.isNull())
-			return cb(null, file);
+			return cb(null, file)
 
 		// cannot handle streams
 		if (file.isStream())
@@ -61,7 +61,7 @@ class GulpRollup extends Transform {
 
 		var originalCwd = file.cwd
 		var originalPath = file.path
-		var moduleName = _.camelCase(path.basename(file.path, path.extname(file.path)))
+		var moduleName = camelCase(path.basename(file.path, path.extname(file.path)))
 
 		function generateAndApplyBundle(bundle, generateOptions, targetFile) {
 			// Sugaring the API by copying convinience objects and properties from rollupOptions
@@ -135,8 +135,8 @@ class GulpRollup extends Transform {
 
 
 		// custom rollup can be provided inside the config object
-		rollup = rollupOptions.rollup || rollup;
-		delete rollupOptions.rollup;
+		rollup = rollupOptions.rollup || rollup
+		delete rollupOptions.rollup
 		rollup
 			// pass basic options to rollup
 			.rollup(rollupOptions)

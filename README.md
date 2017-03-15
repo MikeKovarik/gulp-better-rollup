@@ -81,9 +81,11 @@ But if you really need it for some bizzare reason then you can specify custom en
 
 Second argument is object of options describing output format of the bundle. It's the same thing you would specify as [`bundle.generate(options)` in Rollup API](https://github.com/rollup/rollup/wiki/JavaScript-API#bundlegenerate-options-) or as a single item of  `targets` in `rollup.config.js`
 
-`moduleName` (and `moduleId`) is by default assigned by filename but can be explicitly specified
+`moduleName` and `moduleId` are by default assigned by filename but can be explicitly specified
 
 **Caveat:** Exporting to UMD or IIFE format requires to specify `moduleName`. This plugin takes care of autoassigning it based on filename. But if your main file is named `index.js` or `main.js` then your module will be also named `index` or `main`.
+
+**Caveat:** If you don't want `moduleId` to be automatically assigned for your AMD modules, set `moduleId` it to empty string `.pipe(rollup({moduleId:''}))`
 
 `intro/outro` are discouraged to use in favor of gulps standard plugins like [gulp-header](https://www.npmjs.com/package/gulp-header) and [gulp-footer](https://www.npmjs.com/package/gulp-footer)
 
