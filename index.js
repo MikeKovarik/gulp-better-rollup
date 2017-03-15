@@ -135,7 +135,9 @@ class GulpRollup extends Transform {
 
 
 		// custom rollup can be provided inside the config object
-		;(rollupOptions.rollup || rollup)
+		rollup = rollupOptions.rollup || rollup;
+		delete rollupOptions.rollup;
+		rollup
 			// pass basic options to rollup
 			.rollup(rollupOptions)
 			// after the magic is done, configure the output format
