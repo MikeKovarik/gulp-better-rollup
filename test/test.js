@@ -64,10 +64,10 @@ describe('gulp-better-rollup', function() {
 
 	it('should bundle multiple formats using Rollup', done => {
 		var stream = rollup([{
-			dest: 'output1.mjs',
+			file: 'output1.mjs',
 			format: 'es'
 		}, {
-			dest: 'output2.js',
+			file: 'output2.js',
 			format: 'cjs'
 		}])
 
@@ -88,7 +88,7 @@ describe('gulp-better-rollup', function() {
 		stream.end()
 	})
 
-	it('should bundle umd format with autodetected moduleName', done => {
+	it('should bundle umd format with autodetected module name', done => {
 		var stream = rollup({
 			format: 'umd'
 		})
@@ -156,11 +156,19 @@ describe('gulp-better-rollup', function() {
 			}
 		})
 
-		stream.on('end', data => done())
+		var resultsCount = 0
+		stream.on('data', data => {
+			var code = data.contents.toString().replace(/\n/gm, '').trim()
+			code.should.equal("var importsGlobal = (function ($) {'use strict';$ = $ && $.hasOwnProperty('default') ? $['default'] : $;var importsGlobal = $.trim;return importsGlobal;}(jQuery));")
+			++resultsCount
+		})
+		stream.on('end', data => {
+			resultsCount.should.eql(2)
+			done()
+		})
 
 		stream.write(fileFactory('importsGlobal'))
 		stream.write(fileFactory('importsGlobal'))
-
 		stream.end()
 	})
 
