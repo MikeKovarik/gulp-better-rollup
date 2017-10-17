@@ -72,18 +72,14 @@ class GulpRollup extends Transform {
 				generateOptions['exports'] = rollupOptions['exports']
 			if (generateOptions.format ===  undefined)
 				generateOptions.format = rollupOptions.format
-			if (generateOptions.moduleId ===  undefined)
-				generateOptions.moduleId = rollupOptions.moduleId
 			if (generateOptions.globals ===  undefined)
 				generateOptions.globals = rollupOptions.globals
 			// Rollup won't bundle iife and umd modules without module name.
 			// But it won't say anything either, leaving a space for confusion
 			if (generateOptions.name === undefined)
 				generateOptions.name = rollupOptions.name || moduleName
-			if (generateOptions.format === 'amd') {
-				if (generateOptions.amd === undefined || generateOptions.amd.id === undefined)
-					generateOptions.amd = Object.assign({}, generateOptions.amd, {id: generateOptions.moduleName})
-			}
+			if (generateOptions.amd === undefined || generateOptions.amd.id === undefined)
+				generateOptions.amd = Object.assign({}, generateOptions.amd, {id: generateOptions.name})
 			generateOptions.sourcemap = createSourceMap
 			// generate bundle according to given or autocompleted options
 			return bundle.generate(generateOptions).then(result => {
@@ -151,7 +147,7 @@ class GulpRollup extends Transform {
 				if (rollupOptions.cache !== false)
 					rollupCache.set(rollupOptions.input, bundle)
 				// generate ouput according to (each of) given generateOptions
-				return Promise.all(bundleList.map((generateOptions, i) => createBundle(bundle, generateOptions, i)));
+				return Promise.all(bundleList.map((generateOptions, i) => createBundle(bundle, generateOptions, i)))
 			})
 			// pass file to gulp and end stream
 			.then(() => cb(null, file))

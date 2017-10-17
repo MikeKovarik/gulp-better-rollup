@@ -91,7 +91,7 @@ Second argument is object of options describing output format of the bundle. It'
 
 `sourcemap` option is omitted. Use the standard [gulp-sourcemaps](https://www.npmjs.com/package/gulp-sourcemaps) plugin instead.
 
-`sourceMapFile` is unvailable as well.
+`sourcemapFile` is unvailable as well.
 
 #### shortcuts
 
