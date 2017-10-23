@@ -20,10 +20,10 @@ gulp.task('lib-build', () => {
   gulp.src('lib/index.js')
     .pipe(sourcemaps.init())
     .pipe(rollup({
-      // notice there is no `entry` option as rollup integrates into gulp pipeline
+      // notice there is no `input` option as rollup integrates into gulp pipeline
       plugins: [babel()]
     }, {
-      // also rollups `sourceMap` option is replaced by gulp-sourcemaps plugin
+      // also rollups `sourcemap` option is replaced by gulp-sourcemaps plugin
       format: 'cjs',
     }))
     // inlining the sourcemap into the exported .js file
@@ -38,7 +38,7 @@ or simply
 gulp.task('lib-build', () => {
   gulp.src('lib/mylibrary.js')
     .pipe(sourcemaps.init())
-    // note that UMD and IIFE format requires `moduleName` but it was guessed based on source file `mylibrary.js`
+    // note that UMD and IIFE format requires `name` but it was guessed based on source file `mylibrary.js`
     .pipe(rollup({plugins: [babel()]}, 'umd'))
     // save sourcemap as separate file (in the same folder)
     .pipe(sourcemaps.write(''))
@@ -55,7 +55,7 @@ This plugin is based on [the standard Rollup options](https://github.com/rollup/
 #### `rollupOptions`
 First argument is object of options found you would specify as [`rollup.rollup(options)` in Rollup API](https://github.com/rollup/rollup/wiki/JavaScript-API#rolluprollup-options-)
 
-`entry` should not be used as the entry file is provided by gulp. It also works with gulp-watch
+`input` should not be used as the entry file is provided by gulp. It also works with gulp-watch
 
 ``` js
   gulp.src('src/app.js')
@@ -70,7 +70,7 @@ But if you really need it for some bizzare reason then you can specify custom en
   gulp.src('src/app.js')
     .pipe(someRealityBendingPlugin(...))
     .pipe(rollup({
-      entry: 'src/app.js'
+      input: 'src/app.js'
     }, 'umd'))
     .pipe(gulp.dest('./dist'))
 ```
@@ -81,21 +81,21 @@ But if you really need it for some bizzare reason then you can specify custom en
 
 Second argument is object of options describing output format of the bundle. It's the same thing you would specify as [`bundle.generate(options)` in Rollup API](https://github.com/rollup/rollup/wiki/JavaScript-API#bundlegenerate-options-) or as a single item of  `targets` in `rollup.config.js`
 
-`moduleName` and `moduleId` are by default assigned by filename but can be explicitly specified
+`name` and `amd.id` are by default assigned by filename but can be explicitly specified
 
-**Caveat:** Exporting to UMD or IIFE format requires to specify `moduleName`. This plugin takes care of autoassigning it based on filename. But if your main file is named `index.js` or `main.js` then your module will be also named `index` or `main`.
+**Caveat:** Exporting to UMD or IIFE format requires to specify `name`. This plugin takes care of autoassigning it based on filename. But if your main file is named `index.js` or `main.js` then your module will be also named `index` or `main`.
 
-**Caveat:** If you don't want `moduleId` to be automatically assigned for your AMD modules, set `moduleId` to empty string `.pipe(rollup({moduleId:''}))`
+**Caveat:** If you don't want `amd.id` to be automatically assigned for your AMD modules, set `amd.id` to empty string `.pipe(rollup({amd:{id:''}}))`
 
 `intro/outro` are discouraged to use in favor of gulps standard plugins like [gulp-header](https://www.npmjs.com/package/gulp-header) and [gulp-footer](https://www.npmjs.com/package/gulp-footer)
 
-`sourceMap` option is omitted. Use the standard [gulp-sourcemaps](https://www.npmjs.com/package/gulp-sourcemaps) plugin instead.
+`sourcemap` option is omitted. Use the standard [gulp-sourcemaps](https://www.npmjs.com/package/gulp-sourcemaps) plugin instead.
 
-`sourceMapFile` is unvailable as well.
+`sourcemapFile` is unvailable as well.
 
 #### shortcuts
 
-If you don't need to define `plugins` like babel, use `external` modules, explicitly specify `entry` file, or any other options of `rollupOptions` object, you can just skip this first argument alltogether. Also `generateOptions` can be replaced by string of module format if you only export in a single format.
+If you don't need to define `plugins` like babel, use `external` modules, explicitly specify `input` file, or any other options of `rollupOptions` object, you can just skip this first argument alltogether. Also `generateOptions` can be replaced by string of module format if you only export in a single format.
 
 ``` js
 gulp.task('dev', function() {
@@ -115,7 +115,7 @@ gulp.task('dev', function() {
       plugins: [require('rollup-plugin-babel')],
       external: ['first-dep', 'OtherDependency'],
     }, {
-      moduleName: 'CustomModuleName',
+      name: 'CustomModuleName',
       format: 'umd',
     }))
     .pipe(gulp.dest('dist'))
@@ -131,7 +131,7 @@ gulp.task('dev', function() {
       treeshake: false,
       plugins: [require('rollup-plugin-babel')],
       external: ['first-dep', 'OtherDependency'],
-      moduleName: 'CustomModuleName',
+      name: 'CustomModuleName',
       format: 'umd',
     }))
     .pipe(gulp.dest('dist'))
@@ -148,10 +148,10 @@ gulp.task('build', function() {
   gulp.src('lib/mylib.js')
     .pipe(sourcemaps.init())
     .pipe(rollup(rollupOptions, [{
-      dest: pkg['jsnext:main'],
+      file: pkg['jsnext:main'],
       format: 'es',
     }, {
-      dest: pkg['main'],
+      file: pkg['main'],
       format: 'umd',
     }]))
     .pipe(sourcemaps.write(''))
@@ -159,7 +159,7 @@ gulp.task('build', function() {
 })
 ```
 
-**Caveat 1:** `dest` can take path instead of just a file name, but the file won't be saved there. Exporting files from gulp always relies on the `.pipe(gulp.dest(...))` and not the plugin itself.
+**Caveat 1:** `file` can take path instead of just a file name, but the file won't be saved there. Exporting files from gulp always relies on the `.pipe(gulp.dest(...))` and not the plugin itself.
 
 **Caveat 2:** `gulp-sourcemaps` plugin doesn't (yet) support the `.mjs` extension you might want to use to export ES format into. Specifically it can inline the sourcemap into the bundle file (using `sourcemaps.write()`), and it can also create external sourcemap file with `sourcemaps.write(PATH_TO_SOURCEMAP_FOLDER)`, it just won't insert the `//# sourceMappingURL=` linking comment at the end of your `.mjs` file, effectivelly rendering the sourcemap useless. 
 
