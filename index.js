@@ -46,7 +46,7 @@ class GulpRollup extends Transform {
 		// user should not specify the input file path, but let him if he insists for some reason
 		if (rollupOptions.input === undefined)
 			// determine input from file filename
-			rollupOptions.input = path.relative(file.cwd, file.path)
+			rollupOptions.input = path.resolve(file.cwd, file.path)
 		else
 			// rename file if input is given
 			file.path = path.join(file.cwd, rollupOptions.input)
