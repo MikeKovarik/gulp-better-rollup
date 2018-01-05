@@ -1,4 +1,6 @@
-# gulp-better-rollup 
+# gulp-better-rollup
+
+[![Build Status](https://travis-ci.org/MikeKovarik/gulp-better-rollup.svg?branch=master)](https://travis-ci.org/MikeKovarik/gulp-better-rollup)
 
 A [Gulp](https://www.npmjs.com/package/gulp) plugin for [Rollup](https://www.npmjs.com/package/rollup) ES6 Bundler. This plugin unlike [gulp-rollup](https://www.npmjs.com/package/gulp-rollup) integrates Rollup deeper into Gulps pipeline chain by taking some of the Rollup API out of your hands in exchange of giving you the full power over the pipeline (to use any gulp plugins).
 
