@@ -1,9 +1,8 @@
 'use strict'
 
 var Transform = require('stream').Transform
-var gutil = require('gulp-util')
-var File = gutil.File
-var PluginError = gutil.PluginError
+var File = require('vinyl')
+var PluginError = require('plugin-error')
 var rollup = require('rollup')
 var path = require('path')
 var applySourceMap = require('vinyl-sourcemaps-apply')

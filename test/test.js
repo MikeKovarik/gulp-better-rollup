@@ -2,7 +2,7 @@
 
 var path = require('path')
 var should = require('should')
-var File = require('gulp-util').File
+var File = require('vinyl')
 var sourceMaps = require('gulp-sourcemaps')
 var rollup = require('..')
 
