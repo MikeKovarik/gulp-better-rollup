@@ -14,7 +14,7 @@
   "homepage": "https://github.com/MikeKovarik/gulp-better-rollup",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "keywords": [
     "gulp",
