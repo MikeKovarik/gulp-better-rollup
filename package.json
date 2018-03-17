@@ -25,7 +25,7 @@
   "dependencies": {
     "lodash.camelcase": "^4.3.0",
     "plugin-error": "^0.1.2",
-    "rollup": "^0.50.0",
+    "rollup": ">=0.48 <0.57",
     "vinyl": "^2.1.0",
     "vinyl-sourcemaps-apply": "^0.2.1"
   },

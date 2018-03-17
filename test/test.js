@@ -142,13 +142,7 @@ describe('gulp-better-rollup', function() {
 
 	it('should create a bundle with globals from cache', done => {
 		var stream = rollup({
-			onwarn: ({code, message}) => {
-				if (code === 'UNRESOLVED_IMPORT') {
-					return;
-				}
-
-				console.warn(message);
-			}
+			external: ['jquery']
 		}, {
 			format: 'iife',
 			globals: {
