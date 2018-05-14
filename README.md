@@ -105,7 +105,7 @@ gulp.task('dev', function() {
 })
 ```
 
-**`rollupOptions` and `generateOptions` can be also be specified as a shared object** if you prefer simplicity over adherence to the Rollup JS API semantics.
+**`rollupOptions` and `generateOptions` can also be specified as a shared object** if you prefer simplicity over adherence to the Rollup JS API semantics.
 
 ``` js
 gulp.task('dev', function() {
