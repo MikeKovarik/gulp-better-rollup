@@ -64,12 +64,12 @@ gulp.task('lib-build', () => {
 
 ## Usage & Options
 
-### `rollup([rollupOptions,] generateOptions)`
+### `rollup([inputOptions,] outputOptions)`
 
-This plugin is based on [the standard Rollup options](https://github.com/rollup/rollup/wiki/JavaScript-API), with the following exceptions:
+This plugin is based on [the standard Rollup options](https://rollupjs.org/guide/en#rollup-rollup), with the following exceptions:
 
-#### `rollupOptions`
-See [`rollup.rollup(options)` in the Rollup API](https://github.com/rollup/rollup/wiki/JavaScript-API#rolluprollup-options-)
+#### `inputOptions`
+See [`rollup.rollup(inputOptions)` in the Rollup API](https://rollupjs.org/guide/en#inputoptions)
 
 `input` is unsupported, as the entry file is provided by gulp, which also works with [gulp-watch](https://www.npmjs.com/package/gulp-watch).
 
@@ -93,9 +93,25 @@ If you still need it for some reason, then you can specify a custom entry:
 
 `cache` is enabled by default and taken care of by the plugin, because usage in conjunction with watchers like [gulp-watch](https://www.npmjs.com/package/gulp-watch) is expected. It can however be disabled by settings `cache` to `false`.
 
-#### `generateOptions`
+`cache` allows injection of custom rollup version.
 
-Options describing the output format of the bundle. See [`bundle.generate(options)` in the Rollup API](https://github.com/rollup/rollup/wiki/JavaScript-API#bundlegenerate-options-).
+```js
+const betterRollup = require('gulp-better-rollup');
+
+gulp.task('lib-build', () => {
+  gulp.src('lib/index.js')
+    .pipe(betterRollup({
+      rollup: require('rollup')
+      plugins: [babel()],
+      format: 'cjs',
+      ...
+    }))
+})
+```
+
+#### `outputOptions`
+
+Options describing the output format of the bundle. See [`bundle.generate(outputOptions)` in the Rollup API](https://rollupjs.org/guide/en#outputoptions).
 
 `name` and `amd.id` are inferred from the module file name by default, but can be explicitly specified to override this. For example, if your main file is named `index.js` or `main.js`, then your module would also be named `index` or `main`, which you may not want.
 
@@ -107,9 +123,9 @@ To use [unnamed modules](http://requirejs.org/docs/api.html#modulename) for amd,
 
 #### shortcuts
 
-You can skip this first argument if you don't need to specify `rollupOptions`.
+You can skip this first argument if you don't need to specify `inputOptions`.
 
-`generateOptions` accepts a string with the module format, in case you only want to support a single format.
+`outputOptions` accepts a string with the module format, in case you only want to support a single format.
 
 ``` js
 gulp.task('dev', function() {
@@ -119,7 +135,7 @@ gulp.task('dev', function() {
 })
 ```
 
-**`rollupOptions` and `generateOptions` can also be specified as a shared object** if you prefer simplicity over adherence to the Rollup JS API semantics.
+**`inputOptions` and `outputOptions` can also be specified as a shared object** if you prefer simplicity over adherence to the Rollup JS API semantics.
 
 ``` js
 gulp.task('dev', function() {
@@ -154,14 +170,14 @@ gulp.task('dev', function() {
 
 #### exporting multiple bundles
 
-`generateOptions` can be an array, in order to export to multiple formats.
+`outputOptions` can be an array, in order to export to multiple formats.
 
 ```js
 var pkg = require('./package.json')
 gulp.task('build', function() {
   gulp.src('lib/mylib.js')
     .pipe(sourcemaps.init())
-    .pipe(rollup(rollupOptions, [{
+    .pipe(rollup(inputOptions, [{
       file: pkg['jsnext:main'],
       format: 'es',
     }, {
