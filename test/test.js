@@ -152,7 +152,7 @@ describe('gulp-better-rollup', function() {
 
 		var resultsCount = 0
 		stream.on('data', data => {
-			var code = data.contents.toString().replace(/\n/gm, '').trim()
+			var code = data.contents.toString().replace(/\n/gm, '').replace(/\t/gm, '').trim()
 			code.should.equal("var importsGlobal = (function ($) {'use strict';$ = $ && $.hasOwnProperty('default') ? $['default'] : $;var importsGlobal = $.trim;return importsGlobal;}(jQuery));")
 			++resultsCount
 		})
