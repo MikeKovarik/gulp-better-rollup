@@ -33,27 +33,26 @@ class GulpRollup extends Transform {
 		if (file.isStream())
 			return cb(new PluginError(PLUGIN_NAME, 'Streaming not supported'))
 
-		var rollupOptions
 		if (this.arg2) {
-			rollupOptions = Object.assign({}, this.arg1)
+			var inputOptions = Object.assign({}, this.arg1)
 			var bundleList = parseBundles(this.arg2)
 		} else {
-			rollupOptions = {}
+			var inputOptions = {}
 			var bundleList = parseBundles(this.arg1)
 		}
 
 		// user should not specify the input file path, but let him if he insists for some reason
-		if (rollupOptions.input === undefined)
+		if (inputOptions.input === undefined)
 			// determine input from file filename
-			rollupOptions.input = path.relative(file.cwd, file.path)
+			inputOptions.input = path.relative(file.cwd, file.path)
 		else
 			// rename file if input is given
-			file.path = path.join(file.cwd, rollupOptions.input)
+			file.path = path.join(file.cwd, inputOptions.input)
 
 		// caching is enabled by default because of the nature of gulp and the watching/recompilatin
 		// but can be disabled by setting 'cache' to false
-		if (rollupOptions.cache !== false)
-			rollupOptions.cache = rollupCache.get(rollupOptions.input)
+		if (inputOptions.cache !== false)
+			inputOptions.cache = rollupCache.get(inputOptions.input)
 
 		// enable sourcemap is gulp-sourcemaps plugin is enabled
 		var createSourceMap = file.sourceMap !== undefined
@@ -62,26 +61,26 @@ class GulpRollup extends Transform {
 		var originalPath = file.path
 		var moduleName = camelCase(path.basename(file.path, path.extname(file.path)))
 
-		function generateAndApplyBundle(bundle, generateOptions, targetFile) {
-			// Sugaring the API by copying convinience objects and properties from rollupOptions
-			// to generateOptions (if not defined)
-			if (generateOptions.file === undefined)
-				generateOptions.file = rollupOptions.file
-			if (generateOptions['exports'] === undefined)
-				generateOptions['exports'] = rollupOptions['exports']
-			if (generateOptions.format ===  undefined)
-				generateOptions.format = rollupOptions.format
-			if (generateOptions.globals ===  undefined)
-				generateOptions.globals = rollupOptions.globals
+		function generateAndApplyBundle(bundle, outputOptions, targetFile) {
+			// Sugaring the API by copying convinience objects and properties from inputOptions
+			// to outputOptions (if not defined)
+			if (outputOptions.file === undefined)
+				outputOptions.file = inputOptions.file
+			if (outputOptions['exports'] === undefined)
+				outputOptions['exports'] = inputOptions['exports']
+			if (outputOptions.format ===  undefined)
+				outputOptions.format = inputOptions.format
+			if (outputOptions.globals ===  undefined)
+				outputOptions.globals = inputOptions.globals
 			// Rollup won't bundle iife and umd modules without module name.
 			// But it won't say anything either, leaving a space for confusion
-			if (generateOptions.name === undefined)
-				generateOptions.name = rollupOptions.name || moduleName
-			if (generateOptions.amd === undefined || generateOptions.amd.id === undefined)
-				generateOptions.amd = Object.assign({}, generateOptions.amd, {id: generateOptions.name})
-			generateOptions.sourcemap = createSourceMap
+			if (outputOptions.name === undefined)
+				outputOptions.name = inputOptions.name || moduleName
+			if (outputOptions.amd === undefined || outputOptions.amd.id === undefined)
+				outputOptions.amd = Object.assign({}, outputOptions.amd, {id: outputOptions.name})
+			outputOptions.sourcemap = createSourceMap
 			// generate bundle according to given or autocompleted options
-			return bundle.generate(generateOptions).then(result => {
+			return bundle.generate(outputOptions).then(result => {
 				// Pass sourcemap content and metadata to gulp-sourcemaps plugin to handle
 				// destination (and custom name) was given, possibly multiple output bundles.
 				if (createSourceMap) {
@@ -95,11 +94,11 @@ class GulpRollup extends Transform {
 					applySourceMap(targetFile, result.map)
 			})
 		}
-		var createBundle = (bundle, generateOptions, injectNewFile) => {
+		var createBundle = (bundle, outputOptions, injectNewFile) => {
 			// custom output name might be set
-			if (generateOptions.file) {
-				// setup filename name from generateOptions.file
-				var newFileName = path.basename(generateOptions.file)
+			if (outputOptions.file) {
+				// setup filename name from outputOptions.file
+				var newFileName = path.basename(outputOptions.file)
 				var newFilePath = path.join(file.base, newFileName)
 				if (injectNewFile) {
 					// create new file and inject it into stream if needed (in case of multiple outputs)
@@ -117,42 +116,42 @@ class GulpRollup extends Transform {
 							isSocket: () => false
 						}
 					})
-					return generateAndApplyBundle(bundle, generateOptions, newFile).then(result => {
+					return generateAndApplyBundle(bundle, outputOptions, newFile).then(result => {
 						this.push(newFile)
 						return result
 					})
 				} else {
 					// rename original file
 					file.path = newFilePath
-					return generateAndApplyBundle(bundle, generateOptions, file)
+					return generateAndApplyBundle(bundle, outputOptions, file)
 				}
 			} else {
 				// file wasnt renamed nor new one was created,
 				// apply data and sourcemaps to the original file
-				return generateAndApplyBundle(bundle, generateOptions, file)
+				return generateAndApplyBundle(bundle, outputOptions, file)
 			}
 		}
 
 
 		// custom rollup can be provided inside the config object
-		rollup = rollupOptions.rollup || rollup
-		delete rollupOptions.rollup
+		rollup = inputOptions.rollup || rollup
+		delete inputOptions.rollup
 		rollup
 			// pass basic options to rollup
-			.rollup(rollupOptions)
+			.rollup(inputOptions)
 			// after the magic is done, configure the output format
 			.then(bundle => {
 				// cache rollup object if caching is enabled
-				if (rollupOptions.cache !== false)
-					rollupCache.set(rollupOptions.input, bundle)
-				// generate ouput according to (each of) given generateOptions
-				return Promise.all(bundleList.map((generateOptions, i) => createBundle(bundle, generateOptions, i)))
+				if (inputOptions.cache !== false)
+					rollupCache.set(inputOptions.input, bundle)
+				// generate ouput according to (each of) given outputOptions
+				return Promise.all(bundleList.map((outputOptions, i) => createBundle(bundle, outputOptions, i)))
 			})
 			// pass file to gulp and end stream
 			.then(() => cb(null, file))
 			.catch(err => {
-				if (rollupOptions.cache !== false)
-					rollupCache.delete(rollupOptions.input)
+				if (inputOptions.cache !== false)
+					rollupCache.delete(inputOptions.input)
 				process.nextTick(() => {
 					this.emit('error', new PluginError(PLUGIN_NAME, err))
 					cb(null, file)
@@ -163,7 +162,7 @@ class GulpRollup extends Transform {
 
 }
 
-// first argument (rollupOptions) is optional
+// first argument (inputOptions) is optional
 module.exports = function factory(arg1, arg2) {
 	// instantiate the stream class
 	var stream = new GulpRollup({objectMode: true})
