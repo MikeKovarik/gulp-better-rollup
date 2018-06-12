@@ -15,7 +15,7 @@ function fileFactory(filename) {
 		cwd: cwd,
 		base: fixtureDir,
 		path: path.join(fixtureDir, filename),
-		contents: new Buffer('dumy content not used by gulp'),
+		contents: Buffer.from('dumy content not used by gulp'),
 	})
 }
 
