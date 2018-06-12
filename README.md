@@ -93,7 +93,7 @@ If you still need it for some reason, then you can specify a custom entry:
 
 `cache` is enabled by default and taken care of by the plugin, because usage in conjunction with watchers like [gulp-watch](https://www.npmjs.com/package/gulp-watch) is expected. It can however be disabled by settings `cache` to `false`.
 
-`cache` allows injection of custom rollup version.
+`rollup` allows injection of custom rollup version.
 
 ```js
 const betterRollup = require('gulp-better-rollup');
