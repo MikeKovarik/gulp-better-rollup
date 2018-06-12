@@ -21,6 +21,13 @@ function parseBundles(arg) {
 	return [arg]
 }
 
+function assignCertainProperties(toObject, fromObject, properties = []) {
+	for (var key of properties) {
+		if (toObject[key] === undefined && fromObject[key] !== undefined)
+			toObject[key] = fromObject[key]
+	}
+}
+
 // transformer class
 class GulpRollup extends Transform {
 
@@ -64,14 +71,16 @@ class GulpRollup extends Transform {
 		function generateAndApplyBundle(bundle, outputOptions, targetFile) {
 			// Sugaring the API by copying convinience objects and properties from inputOptions
 			// to outputOptions (if not defined)
-			if (outputOptions.file === undefined)
-				outputOptions.file = inputOptions.file
-			if (outputOptions['exports'] === undefined)
-				outputOptions['exports'] = inputOptions['exports']
-			if (outputOptions.format ===  undefined)
-				outputOptions.format = inputOptions.format
-			if (outputOptions.globals ===  undefined)
-				outputOptions.globals = inputOptions.globals
+			// Directly copied from https://rollupjs.org/guide/en#outputoptions
+			var propsToCopy = [
+				// core options
+				'format', 'file', 'dir', /*'name'*/, 'globals',
+				// advanced options
+				'paths', 'banner', 'footer', 'intro', 'outro', 'sourcemap', 'sourcemapFile', 'interop', 'extend',
+				// danger zone
+				'exports', /*'amd',*/ 'indent', 'strict', 'freeze', 'legacy', 'namespaceToStringTag',
+			]
+			assignCertainProperties(outputOptions, inputOptions, propsToCopy)
 			// Rollup won't bundle iife and umd modules without module name.
 			// But it won't say anything either, leaving a space for confusion
 			if (outputOptions.name === undefined)
@@ -81,6 +90,7 @@ class GulpRollup extends Transform {
 			outputOptions.sourcemap = createSourceMap
 			// generate bundle according to given or autocompleted options
 			return bundle.generate(outputOptions).then(result => {
+				if (result === undefined) return
 				// Pass sourcemap content and metadata to gulp-sourcemaps plugin to handle
 				// destination (and custom name) was given, possibly multiple output bundles.
 				if (createSourceMap) {
@@ -88,7 +98,7 @@ class GulpRollup extends Transform {
 					result.map.sources = result.map.sources.map(source => path.relative(originalCwd, source))
 				}
 				// return bundled file as buffer
-				targetFile.contents = new Buffer(result.code)
+				targetFile.contents = Buffer.from(result.code)
 				// apply sourcemap to output file
 				if (createSourceMap)
 					applySourceMap(targetFile, result.map)
