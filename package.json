@@ -22,6 +22,9 @@
     "rollup",
     "es6"
   ],
+  "engines": {
+    "node": ">=8"
+  },
   "dependencies": {
     "lodash.camelcase": "^4.3.0",
     "plugin-error": "^1.0.1",
