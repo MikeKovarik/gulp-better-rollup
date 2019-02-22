@@ -74,11 +74,13 @@ class GulpRollup extends Transform {
 			// Directly copied from https://rollupjs.org/guide/en#outputoptions
 			var propsToCopy = [
 				// core options
-				'format', 'file', 'dir', /*'name'*/, 'globals',
+				'dir', 'file', 'format', 'globals', /*'name',*/
 				// advanced options
-				'paths', 'banner', 'footer', 'intro', 'outro', 'sourcemap', 'sourcemapFile', 'interop', 'extend',
+				'assetFileNames', 'banner', 'chunkFileNames', 'compact', 'entryFileNames', 'extend', 'footer', 'interop',
+				'intro', 'outro', 'paths', 'sourcemap', 'sourcemapExcludeSources', 'sourcemapFile', 'sourcemapPathTransform',
 				// danger zone
-				'exports', /*'amd',*/ 'indent', 'strict', 'freeze', 'legacy', 'namespaceToStringTag',
+				/*'amd',*/ 'esModule', 'exports', 'freeze', 'indent', 'namespaceToStringTag', 'noConflict', 'preferConst',
+				'strict',
 			]
 			assignCertainProperties(outputOptions, inputOptions, propsToCopy)
 			// Rollup won't bundle iife and umd modules without module name.
@@ -91,17 +93,18 @@ class GulpRollup extends Transform {
 			// generate bundle according to given or autocompleted options
 			return bundle.generate(outputOptions).then(result => {
 				if (result === undefined) return
+				var output = result.output[0]
 				// Pass sourcemap content and metadata to gulp-sourcemaps plugin to handle
 				// destination (and custom name) was given, possibly multiple output bundles.
 				if (createSourceMap) {
-					result.map.file = path.relative(originalCwd, originalPath)
-					result.map.sources = result.map.sources.map(source => path.relative(originalCwd, source))
+					output.map.file = path.relative(originalCwd, originalPath)
+					output.map.sources = output.map.sources.map(source => path.relative(originalCwd, source))
 				}
 				// return bundled file as buffer
-				targetFile.contents = Buffer.from(result.code)
+				targetFile.contents = Buffer.from(output.code)
 				// apply sourcemap to output file
 				if (createSourceMap)
-					applySourceMap(targetFile, result.map)
+					applySourceMap(targetFile, output.map)
 			})
 		}
 		var createBundle = (bundle, outputOptions, injectNewFile) => {
