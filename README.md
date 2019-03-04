@@ -188,3 +188,7 @@ gulp.task('build', function() {
     .pipe(gulp.dest('dist'))
 })
 ```
+
+## Looking for maintainer
+
+I no longer have time to dedicate myself to the project, nor do I use it in my current projects. I'd gladly accept new maintainers.
