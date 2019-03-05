@@ -23,6 +23,12 @@ This comes with some caveats:
 npm install gulp-better-rollup --save-dev
 ```
 
+You also need to install your own rollup (version 1.x.x). `gulp-better-rollup` depends on your `rollup` as a peer-dependency.
+
+```
+npm install rollup@^1 --save-dev
+```
+
 ## Usage
 
 ``` js
@@ -92,22 +98,6 @@ If you still need it for some reason, then you can specify a custom entry:
 ```
 
 `cache` is enabled by default and taken care of by the plugin, because usage in conjunction with watchers like [gulp-watch](https://www.npmjs.com/package/gulp-watch) is expected. It can however be disabled by settings `cache` to `false`.
-
-`rollup` allows injection of custom rollup version.
-
-```js
-const betterRollup = require('gulp-better-rollup');
-
-gulp.task('lib-build', () => {
-  gulp.src('lib/index.js')
-    .pipe(betterRollup({
-      rollup: require('rollup')
-      plugins: [babel()],
-      format: 'cjs',
-      ...
-    }))
-})
-```
 
 #### `outputOptions`
 
