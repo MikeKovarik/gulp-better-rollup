@@ -3,12 +3,18 @@
 var Transform = require('stream').Transform
 var File = require('vinyl')
 var PluginError = require('plugin-error')
-var rollup = require('rollup')
 var path = require('path')
 var applySourceMap = require('vinyl-sourcemaps-apply')
 var camelCase = require('lodash.camelcase')
 
 var PLUGIN_NAME = 'gulp-better-rollup'
+
+try {
+	var rollup = require('rollup')
+} catch(err) {
+	console.error('ROLLUP NOT FOUND')
+	console.warn(`${PLUGIN_NAME} doesn't include rollup out of the box anymore. You need to install your own rollup. Version 1.0.0 or higher.`)
+}
 
 // map object storing rollup cache objects for each input file
 var rollupCache = new Map
