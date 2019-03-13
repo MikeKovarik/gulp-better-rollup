@@ -17,7 +17,7 @@ try {
 }
 
 // map object storing rollup cache objects for each input file
-var rollupCache = null
+var rollupCache = {}
 
 function parseBundles(arg) {
 	if (typeof arg == 'string')
@@ -64,9 +64,8 @@ class GulpRollup extends Transform {
 
 		// caching is enabled by default because of the nature of gulp and the watching/recompilatin
 		// but can be disabled by setting 'cache' to false
-		if (inputOptions.cache !== false) {
-			inputOptions.cache = rollupCache
-		}
+		if (inputOptions.cache !== false)
+			inputOptions.cache = rollupCache[inputOptions.input] || null
 
 		// enable sourcemap is gulp-sourcemaps plugin is enabled
 		var createSourceMap = file.sourceMap !== undefined
@@ -163,7 +162,7 @@ class GulpRollup extends Transform {
 			.then(bundle => {
 				// cache rollup object if caching is enabled
 				if (inputOptions.cache !== false)
-					rollupCache = bundle
+					rollupCache[inputOptions.input] = bundle
 				// generate ouput according to (each of) given outputOptions
 				return Promise.all(bundleList.map((outputOptions, i) => createBundle(bundle, outputOptions, i)))
 			})
@@ -171,7 +170,7 @@ class GulpRollup extends Transform {
 			.then(() => cb(null, file))
 			.catch(err => {
 				if (inputOptions.cache !== false)
-					rollupCache = null
+					rollupCache[inputOptions.input] = null
 				process.nextTick(() => {
 					this.emit('error', new PluginError(PLUGIN_NAME, err))
 					cb(null, file)
