@@ -113,7 +113,9 @@ class GulpRollup extends Transform {
 					applySourceMap(targetFile, output.map)
 			})
 		}
-		var createBundle = (bundle, outputOptions, injectNewFile) => {
+		var createBundle = (bundle, originOutputOptions, injectNewFile) => {
+			// prevent modifying outputOption to affect other bundle
+			var outputOptions = Object.assign({}, originOutputOptions)
 			// custom output name might be set
 			if (outputOptions.file) {
 				// setup filename name from outputOptions.file
