@@ -1,17 +1,17 @@
 {
-  "name": "gulp-better-rollup",
-  "version": "4.0.1",
+  "name": "gulp-best-rollup",
+  "version": "4.0.2",
   "description": "Better Gulp plugin for Rollup ES6 module bundler",
-  "author": "Mike Kovarik",
+  "author": "Mike Kovarik, jdz321",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/MikeKovarik/gulp-better-rollup"
+    "url": "git://github.com/jdz321/gulp-better-rollup"
   },
   "bugs": {
-    "url": "https://github.com/MikeKovarik/gulp-better-rollup/issues"
+    "url": "https://github.com/jdz321/gulp-better-rollup/issues"
   },
-  "homepage": "https://github.com/MikeKovarik/gulp-better-rollup",
+  "homepage": "https://github.com/jdz321/gulp-better-rollup",
   "main": "index.js",
   "scripts": {
     "test": "mocha"
